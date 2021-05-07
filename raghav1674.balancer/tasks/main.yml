@@ -1,0 +1,42 @@
+---
+# tasks file for raghav1674.balancer
+
+- name: Make sure that packages are installed
+  yum:
+    name: 
+    - haproxy 
+    - firewalld 
+    state: present 
+
+
+- name: Make sure that services are started and enabled 
+  service:
+    name: "{{ item }}"
+    state: started 
+    enabled: true
+  loop:
+  - haproxy 
+  - firewalld 
+
+
+- name: Install the haproxy.conf file 
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg 
+  notify: Restart haproxy 
+
+
+- name: Allow {{ FRONTEND_PORT }} service in firewall
+  firewalld:
+    port: "{{ FRONTEND_PORT }}/tcp"
+    state: enabled
+    immediate: true
+    permanent: true
+
+- name: Allow http service 
+  firewalld:
+    service: http
+    state: enabled 
+    immediate: true
+    permanent: true
+
