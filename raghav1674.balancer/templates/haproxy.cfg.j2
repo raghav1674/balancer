@@ -80,7 +80,7 @@ backend static
 #---------------------------------------------------------------------
 backend app
     balance     roundrobin
-    {% for server in groups['webserver'] %}
+    {% for server in groups['webservers'] %}
     server  app{{ loop.index }} {{ hostvars[server]['ansible_default_ipv4']['address'] }}:80 check  
     {% endfor %}
 
